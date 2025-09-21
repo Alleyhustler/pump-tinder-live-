@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pump Tinder Live</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #70927d;
+            --dark-green: #1f2823;
+            --medium-green: #577161;
+            --white: #ffffff;
+            --black: #000000;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(112, 146, 125, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--dark-green) 0%, var(--black) 100%);
+            color: var(--white);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Background System */
+        .bg-system {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.3;
+        }
+
+        .neural-network {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(112, 146, 125, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(87, 113, 97, 0.15) 0%, transparent 50%);
+        }
+
+        .grid-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(112, 146, 125, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(112, 146, 125, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+
+        /* Header */
+        .elite-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(31, 40, 35, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 0;
+            height: 80px;
+        }
+
+        .header-container {
+            max-width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            align-items: center;
+            padding: 0 40px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--primary-green);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url('logo.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+
+        .center-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 8px 16px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            backdrop-filter: blur(20px);
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary-green);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .live-status {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(112, 146, 125, 0.2);
+            padding: 10px 18px;
+            border-radius: 25px;
+            border: 1px solid var(--primary-green);
+        }
+
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        /* Main Layout Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr 380px;
+            grid-template-rows: 1fr auto;
+            padding: 110px 40px 40px;
+            gap: 30px;
+            min-height: 100vh;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Queue Panel */
+        .queue-panel {
+            background: rgba(31, 40, 35, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            grid-row: 1;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(112, 146, 125, 0.2);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--white);
+            letter-spacing: -0.3px;
+        }
+
+        .queue-count {
+            background: var(--primary-green);
+            color: var(--white);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .queue-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: calc(100vh - 300px);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .queue-user {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .queue-user:hover {
+            transform: translateX(5px);
+            border-color: var(--primary-green);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #333;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid var(--glass-border);
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 4px;
+        }
+
+        .user-meta {
+            font-size: 13px;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-status {
+            background: rgba(112, 146, 125, 0.3);
+            color: var(--primary-green);
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Center Arena */
+        .center-arena {
+            background: rgba(31, 40, 35, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            grid-row: 1;
+        }
+
+        .role-selection-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(31, 40, 35, 0.98);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 40px;
+            border-radius: 24px;
+        }
+
+        .selection-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--white);
+            text-align: center;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .selection-subtitle {
+            font-size: 16px;
+            color: #999;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            max-width: 500px;
+        }
+
+        .role-options {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .role-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px 25px;
+            width: 220px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-green);
+            background: rgba(112, 146, 125, 0.1);
+        }
+
+        .role-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .role-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .role-desc {
+            font-size: 14px;
+            color: #aaa;
+            line-height: 1.4;
+        }
+
+        /* Match Display */
+        .match-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .round-display {
+            font-size: 14px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .match-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--white);
+        }
+
+        .contestants-display {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex: 1;
+            position: relative;
+            min-height: 300px;
+        }
+
+        .contestant {
+            text-align: center;
+            transition: all 0.6s ease;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .contestant.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .contestant-avatar-large {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: #333;
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 20px;
+            border: 4px solid var(--glass-border);
+        }
+
+        .contestant-name-large {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .contestant-info {
+            font-size: 14px;
+            color: #999;
+            line-height: 1.5;
+        }
+
+        .vs-divider {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--primary-green);
+            z-index: 10;
+        }
+
+        .loading-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(112, 146, 125, 0.2);
+            border-top: 3px solid var(--primary-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Voting Panel */
+        .voting-panel {
+            background: rgba(31, 40, 35, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            grid-row: 1;
+        }
+
+        .vote-section {
+            margin-bottom: 30px;
+        }
+
+        .vote-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .vote-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 18px 25px;
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .vote-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-green);
+            background: rgba(112, 146, 125, 0.1);
+        }
+
+        .vote-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .vote-results {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .result-bar-container {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .result-bar-yes {
+            background: var(--primary-green);
+            transition: width 0.8s ease;
+        }
+
+        .result-bar-no {
+            background: #666;
+            transition: width 0.8s ease;
+        }
+
+        .result-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stat-yes { color: var(--primary-green); }
+        .stat-no { color: #999; }
+
+        /* Social Links Panel */
+        .social-panel {
+            background: rgba(31, 40, 35, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            grid-column: 1 / -1;
+            grid-row: 2;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-green);
+            background: rgba(112, 146, 125, 0.1);
+        }
+
+        .social-icon {
+            font-size: 20px;
+        }
+
+        /* Live Feed */
+        .live-feed {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feed-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(112, 146, 125, 0.2);
+        }
+
+        .feed-messages {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .feed-message {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--primary-green);
+        }
+
+        .message-user {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 4px;
+        }
+
+        .message-text {
+            font-size: 14px;
+            color: #ddd;
+            line-height: 1.4;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .main-grid {
+                grid-template-columns: 320px 1fr 340px;
+                gap: 25px;
+                padding: 110px 30px 30px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .header-container {
+                grid-template-columns: 1fr auto 1fr;
+            }
+            
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .social-panel {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                padding: 110px 20px 20px;
+                gap: 15px;
+            }
+            
+            .contestants-display {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .vs-divider {
+                position: relative;
+                transform: none;
+            }
+            
+            .social-panel {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-system">
+        <div class="neural-network"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <header class="elite-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo-text">Pump Tinder Live</div>
+            </div>
+            
+            <div class="center-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalUsers">18</div>
+                    <div class="stat-label">In Queue</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalMatches">342</div>
+                    <div class="stat-label">Matches Today</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalVotes">12.7K</div>
+                    <div class="stat-label">Total Votes</div>
+                </div>
+            </div>
+            
+            <div class="live-status">
+                <div class="live-indicator">
+                    <div class="pulse-dot"></div>
+                    <span style="font-weight: 700; font-size: 14px;">LIVE</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-grid">
+        <!-- Queue Panel -->
+        <section class="queue-panel">
+            <div class="panel-header">
+                <h2 class="panel-title">Trading Queue</h2>
+                <div class="queue-count" id="queueCount">18 waiting</div>
+            </div>
+            <div class="queue-list" id="queueList">
+                <!-- Populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Center Arena -->
+        <section class="center-arena">
+            <!-- Role Selection Overlay -->
+            <div class="role-selection-overlay" id="roleSelection">
+                <h1 class="selection-title">Enter the Tinder Matching</h1>
+                <p class="selection-subtitle">Join the premier crypto dating platform where traders find their perfect match through community consensus.</p>
+                
+                <div class="role-options">
+                    <div class="role-card" onclick="selectRole('participant')">
+                        <div class="role-icon">📈</div>
+                        <div class="role-title">Join the Match-up</div>
+                        <div class="role-desc">Enter the queue and find your trading partner through community voting</div>
+                    </div>
+                    
+                    <div class="role-card" onclick="selectRole('watcher')">
+                        <div class="role-icon">⚖️</div>
+                        <div class="role-title">Outside Viewer</div>
+                        <div class="role-desc">Watch live matches and vote to determine perfect trading pairs</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Match Content -->
+            <div class="match-content" id="matchContent" style="display: none;">
+                <div class="match-header">
+                    <div class="round-display">Round <span id="roundNum">1</span></div>
+                    <h1 class="match-title">Live Trading Floor</h1>
+                </div>
+                
+                <div class="contestants-display" id="contestantsArea">
+                    <div class="loading-display">
+                        <div class="loading-spinner"></div>
+                        <div style="font-size: 18px; color: #666;">Selecting next trading pair...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Voting Panel -->
+        <section class="voting-panel">
+            <div class="panel-header">
+                <h2 class="panel-title">Market Vote</h2>
+                <div class="queue-count">Live Trading</div>
+            </div>
+            
+            <div class="vote-section">
+                <div class="vote-buttons" id="voteButtons">
+                    <button class="vote-btn" onclick="castVote('yes')" id="yesBtn">
+                        📊 Perfect Pair
+                    </button>
+                    <button class="vote-btn" onclick="castVote('no')" id="noBtn">
+                        📉 No Synergy
+                    </button>
+                </div>
+                
+                <div class="vote-results" id="voteResults">
+                    <div class="results-header">
+                        <span style="font-size: 14px; font-weight: 700; color: #888;">LIVE RESULTS</span>
+                        <span style="font-size: 12px; color: #666;" id="totalVoteCount">0 votes</span>
+                    </div>
+                    
+                    <div class="result-bar-container">
+                        <div class="result-bar-yes" id="yesBar" style="width: 50%;"></div>
+                        <div class="result-bar-no" id="noBar" style="width: 50%;"></div>
+                    </div>
+                    
+                    <div class="result-stats">
+                        <span class="stat-yes">📊 <span id="yesVotes">0</span></span>
+                        <span class="stat-no">📉 <span id="noVotes">0</span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="live-feed">
+                <div class="feed-header">Trading Activity</div>
+                <div class="feed-messages" id="feedMessages">
+                    <div class="feed-message">
+                        <div class="message-user">System</div>
+                        <div class="message-text">Welcome to Pump Tinder Live Trading Floor!</div>
+                    </div>
+                </div>
+            </div>
+
+                        <a href="https://x.com/PumpTinderLive" class="social-link" target="_blank">
+                <span class="social-icon"></span>
+                <span>Follow on Twitter</span>
+            </a>
+            <a href="https://x.com/PumpTinderLive" class="social-link" target="_blank">
+                <span class="social-icon"></span>
+                <span>Visit Pump.fun</span>
+            </a>
+            <div class="social-link" onclick="copyCA()">
+                <span class="social-icon"></span>
+                <span>Copy CA: HERE</span>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Application State
+        const AppState = {
+            currentRole: null,
+            activeMatch: null,
+            roundNumber: 1,
+            hasVoted: false,
+            votes: { yes: 0, no: 0 },
+            queue: [],
+            stats: { totalUsers: 18, totalMatches: 342, totalVotes: 12700 }
+        };
+
+        // Crypto User Database
+        const UserDatabase = [
+            { name: 'CryptoAlex', age: 28, interests: 'DeFi, NFTs', location: 'Silicon Valley', profession: 'Blockchain Dev', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face' },
+            { name: 'DiamondSarah', age: 26, interests: 'HODLing, Staking', location: 'Miami', profession: 'Crypto Trader', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face' },
+            { name: 'Web3Marcus', age: 31, interests: 'GameFi, Metaverse', location: 'Austin', profession: 'Smart Contract Dev', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face' },
+            { name: 'NFTqueen', age: 24, interests: 'Art, Collections', location: 'NYC', profession: 'Digital Artist', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face' },
+            { name: 'DeFiDave', age: 29, interests: 'Yield Farming, LP', location: 'San Francisco', profession: 'Protocol Engineer', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face' },
+            { name: 'LunaTrader', age: 27, interests: 'Futures, Options', location: 'Chicago', profession: 'Quant Trader', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face' },
+            { name: 'SolanaMax', age: 25, interests: 'Fast TPS, Low Fees', location: 'Portland', profession: 'DApp Developer', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face' },
+            { name: 'EthereumElla', age: 30, interests: 'Smart Contracts, DeFi', location: 'Seattle', profession: 'Security Auditor', avatar: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=150&h=150&fit=crop&crop=face' },
+            { name: 'BTCMaxi', age: 33, interests: 'Store of Value, Mining', location: 'Denver', profession: 'Mining Engineer', avatar: 'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=150&h=150&fit=crop&crop=face' },
+            { name: 'DogeWhale', age: 28, interests: 'Meme Coins, Community', location: 'Los Angeles', profession: 'Social Media Manager', avatar: 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face' },
+            { name: 'ApeHodler', age: 26, interests: 'Blue Chip NFTs, BAYC', location: 'Miami Beach', profession: 'NFT Flipper', avatar: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face' },
+            { name: 'PepeTrader', age: 24, interests: 'Meme Trading, Alpha', location: 'New York', profession: 'Day Trader', avatar: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=150&h=150&fit=crop&crop=face' },
+            { name: 'ChainlinkOracle', age: 32, interests: 'Oracles, Data Feeds', location: 'Boston', profession: 'Data Engineer', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face' },
+            { name: 'UniswapLily', age: 25, interests: 'DEX Trading, AMM', location: 'San Diego', profession: 'DeFi Researcher', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face' },
+            { name: 'PancakeSwap', age: 27, interests: 'BSC, Yield Farming', location: 'Phoenix', profession: 'Farm Manager', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&h=150&fit=crop&crop=face' },
+            { name: 'MetaMaskMike', age: 29, interests: 'Wallet Security, Keys', location: 'Dallas', profession: 'Security Consultant', avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face' },
+            { name: 'OpenSeaNina', age: 23, interests: 'NFT Marketplace, Art', location: 'Atlanta', profession: 'Marketplace Analyst', avatar: 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=150&h=150&fit=crop&crop=face' },
+            { name: 'FlashLoanFred', age: 30, interests: 'Arbitrage, MEV', location: 'Vegas', profession: 'MEV Searcher', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face' },
+            { name: 'StakingStella', age: 28, interests: 'PoS, Validators', location: 'Nashville', profession: 'Validator Operator', avatar: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face' },
+            { name: 'RektRyan', age: 26, interests: 'Risk Management, TA', location: 'Tampa', profession: 'Risk Analyst', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face' },
+            { name: 'GigachaDegen', age: 31, interests: 'High Risk, High Reward', location: 'Orlando', profession: 'Hedge Fund PM', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face' }
+        ];
+
+        // Initialize Application
+        function initializeApp() {
+            AppState.queue = [...UserDatabase];
+            renderQueue();
+            updateStats();
+            startLiveActivity();
+            
+            // Auto-start matching after 3 seconds
+            setTimeout(() => {
+                if (!AppState.currentRole) return;
+                initiateMatch();
+            }, 3000);
+        }
+
+        // Role Selection System
+        function selectRole(role) {
+            AppState.currentRole = role;
+            
+            // Hide role selection with animation
+            const roleSelection = document.getElementById('roleSelection');
+            roleSelection.style.opacity = '0';
+            roleSelection.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                roleSelection.style.display = 'none';
+                document.getElementById('matchContent').style.display = 'flex';
+                document.getElementById('matchContent').style.flexDirection = 'column';
+                
+                addLiveMessage('System', `${role === 'participant' ? 'Trader' : 'Market Maker'} ${role === 'participant' ? 'joined the queue' : 'entered the floor'}`);
+                
+                // Start first match
+                setTimeout(initiateMatch, 1500);
+            }, 400);
+        }
+
+        // Queue Rendering
+        function renderQueue() {
+            const queueList = document.getElementById('queueList');
+            const queueCount = document.getElementById('queueCount');
+            
+            queueCount.textContent = `${AppState.queue.length} waiting`;
+            queueList.innerHTML = '';
+            
+            AppState.queue.forEach((user, index) => {
+                const userElement = document.createElement('div');
+                userElement.className = 'queue-user';
+                
+                const statusText = index === 0 ? 'Next Up' : index === 1 ? 'On Deck' : `Position ${index + 1}`;
+                
+                userElement.innerHTML = `
+                    <div class="user-avatar" style="background-image: url('${user.avatar}')"></div>
+                    <div class="user-details">
+                        <div class="user-name">${user.name}, ${user.age}</div>
+                        <div class="user-meta">
+                            <span>${user.profession}</span>
+                            <span class="user-status">${statusText}</span>
+                        </div>
+                    </div>
+                `;
+                
+                queueList.appendChild(userElement);
+            });
+        }
+
+        // Match System
+        function initiateMatch() {
+            if (AppState.queue.length < 2) {
+                // Refill queue with shuffled users
+                const newUsers = [...UserDatabase].sort(() => Math.random() - 0.5).slice(0, 8);
+                AppState.queue.push(...newUsers);
+                renderQueue();
+            }
+            
+            // Select couple
+            const couple = AppState.queue.splice(0, 2);
+            AppState.activeMatch = couple;
+            AppState.hasVoted = false;
+            AppState.votes = { yes: 0, no: 0 };
+            
+            renderMatch(couple);
+            resetVoting();
+            renderQueue();
+            updateStats();
+            
+            addLiveMessage('Trading Floor', `New pair: ${couple[0].name} & ${couple[1].name} - Cast your votes!`);
+            
+            // Auto-simulate voting
+            setTimeout(simulateVoting, 3000);
+            
+            // Auto-advance match after 5 minutes (300 seconds)
+            setTimeout(advanceMatch, 300000);
+        }
+
+        // Match Rendering
+        function renderMatch(couple) {
+            const contestantsArea = document.getElementById('contestantsArea');
+            const roundNum = document.getElementById('roundNum');
+            
+            roundNum.textContent = AppState.roundNumber;
+            
+            contestantsArea.innerHTML = `
+                <div class="contestant">
+                    <div class="contestant-avatar-large" style="background-image: url('${couple[0].avatar}')"></div>
+                    <div class="contestant-name-large">${couple[0].name}</div>
+                    <div class="contestant-info">
+                        ${couple[0].age} years old<br>
+                        ${couple[0].profession}<br>
+                        ${couple[0].location}<br>
+                        <em>${couple[0].interests}</em>
+                    </div>
+                </div>
+                <div class="vs-divider">VS</div>
+                <div class="contestant">
+                    <div class="contestant-avatar-large" style="background-image: url('${couple[1].avatar}')"></div>
+                    <div class="contestant-name-large">${couple[1].name}</div>
+                    <div class="contestant-info">
+                        ${couple[1].age} years old<br>
+                        ${couple[1].profession}<br>
+                        ${couple[1].location}<br>
+                        <em>${couple[1].interests}</em>
+                    </div>
+                </div>
+            `;
+            
+            // Animate contestants in
+            setTimeout(() => {
+                const contestants = contestantsArea.querySelectorAll('.contestant');
+                contestants.forEach((contestant, index) => {
+                    setTimeout(() => {
+                        contestant.classList.add('active');
+                    }, index * 300);
+                });
+            }, 100);
+        }
+
+        // Voting System
+        function castVote(voteType) {
+            if (AppState.hasVoted || !AppState.activeMatch) return;
+            
+            AppState.hasVoted = true;
+            AppState.votes[voteType]++;
+            
+            // Disable voting buttons
+            const buttons = document.querySelectorAll('.vote-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.6';
+            });
+            
+            updateVoteDisplay();
+            addLiveMessage('You', `Voted ${voteType === 'yes' ? 'Perfect Pair!' : 'No Synergy'}`);
+        }
+
+        // Simulate Voting
+        function simulateVoting() {
+            const voteCount = Math.floor(Math.random() * 100) + 50;
+            
+            for (let i = 0; i < voteCount; i++) {
+                setTimeout(() => {
+                    const voteType = Math.random() > 0.4 ? 'yes' : 'no';
+                    if (!AppState.hasVoted || Math.random() > 0.7) {
+                        AppState.votes[voteType]++;
+                        updateVoteDisplay();
+                    }
+                }, Math.random() * 280000); // Spread votes over ~4.5 minutes
+            }
+        }
+
+        // Update Vote Display
+        function updateVoteDisplay() {
+            const total = AppState.votes.yes + AppState.votes.no;
+            if (total === 0) return;
+            
+            const yesPercent = (AppState.votes.yes / total) * 100;
+            const noPercent = (AppState.votes.no / total) * 100;
+            
+            document.getElementById('yesBar').style.width = yesPercent + '%';
+            document.getElementById('noBar').style.width = noPercent + '%';
+            document.getElementById('yesVotes').textContent = AppState.votes.yes;
+            document.getElementById('noVotes').textContent = AppState.votes.no;
+            document.getElementById('totalVoteCount').textContent = `${total} votes`;
+        }
+
+        // Advance to Next Match
+        function advanceMatch() {
+            const winner = AppState.votes.yes > AppState.votes.no ? 'Perfect Trading Pair!' : 'No Market Synergy';
+            const couple = AppState.activeMatch;
+            
+            addLiveMessage('Results', `${couple[0].name} & ${couple[1].name}: ${winner} (${AppState.votes.yes} vs ${AppState.votes.no})`);
+            
+            AppState.roundNumber++;
+            AppState.stats.totalMatches++;
+            AppState.stats.totalVotes += AppState.votes.yes + AppState.votes.no;
+            
+            // Show loading state
+            document.getElementById('contestantsArea').innerHTML = `
+                <div class="loading-display">
+                    <div class="loading-spinner"></div>
+                    <div style="font-size: 18px; color: #666;">Selecting next trading pair...</div>
+                </div>
+            `;
+            
+            updateStats();
+            setTimeout(initiateMatch, 4000);
+        }
+
+        // Reset Voting Interface
+        function resetVoting() {
+            const buttons = document.querySelectorAll('.vote-btn');
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            });
+            
+            AppState.votes = { yes: 0, no: 0 };
+            updateVoteDisplay();
+        }
+
+        // Update Statistics
+        function updateStats() {
+            document.getElementById('totalUsers').textContent = AppState.queue.length;
+            document.getElementById('totalMatches').textContent = AppState.stats.totalMatches;
+            document.getElementById('totalVotes').textContent = (AppState.stats.totalVotes / 1000).toFixed(1) + 'K';
+        }
+
+        // Live Activity Feed
+        function addLiveMessage(user, message) {
+            const feedMessages = document.getElementById('feedMessages');
+            const messageElement = document.createElement('div');
+            messageElement.className = 'feed-message';
+            messageElement.innerHTML = `
+                <div class="message-user">${user}</div>
+                <div class="message-text">${message}</div>
+            `;
+            
+            feedMessages.appendChild(messageElement);
+            feedMessages.scrollTop = feedMessages.scrollHeight;
+            
+            // Keep only last 20 messages
+            while (feedMessages.children.length > 20) {
+                feedMessages.removeChild(feedMessages.firstChild);
+            }
+        }
+
+        // Start Live Activity Simulation
+        function startLiveActivity() {
+            const activities = [
+                'voted for perfect pair',
+                'joined the trading floor',
+                'cast their market vote',
+                'entered the queue',
+                'voted no synergy',
+                'made a decisive vote',
+                'joined as market maker',
+                'cast bullish vote'
+            ];
+            
+            const cryptoNames = [
+                'DegenKing', 'MoonBoy', 'DiamondHands', 'PaperHands', 'CryptoChad',
+                'BlockchainBabe', 'SatoshiSon', 'VitalikFan', 'DeFiDiva', 'NFTNinja',
+                'AltcoinAce', 'YieldFarmer', 'LiquidityLord', 'GasOptimizer', 'FlashLoanFiend'
+            ];
+            
+            setInterval(() => {
+                if (Math.random() > 0.4) {
+                    const activity = activities[Math.floor(Math.random() * activities.length)];
+                    const name = cryptoNames[Math.floor(Math.random() * cryptoNames.length)] + Math.floor(Math.random() * 999);
+                    addLiveMessage(name, activity);
+                }
+            }, 4000);
+        }
+
+        // Copy CA Function
+        function copyCA() {
+            const ca = 'https://x.com/PumpTinderLive';
+            navigator.clipboard.writeText(ca).then(() => {
+                addLiveMessage('System', 'Contract address copied to clipboard!');
+            });
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
